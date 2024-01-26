@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model comments {
+  comment_id   Int       @id @default(autoincrement())
+  user_id      Int?
+  img_id       Int?
+  date_comment DateTime? @db.Date
+  content      String?   @db.VarChar(255)
+  img          img?      @relation(fields: [img_id], references: [img_id], map: "FK_cmtimgid")
+  users        users?    @relation(fields: [user_id], references: [user_id], map: "FK_cmtuserid")
+
+  @@index([img_id], map: "FK_cmtimgid")
+  @@index([user_id], map: "FK_cmtuserid")
+}
+
+model img {
+  img_id          Int        @id @default(autoincrement())
+  user_id         Int?
+  img_name        String?    @db.VarChar(255)
+  img_description String?    @db.VarChar(255)
+  url             String?    @db.VarChar(255)
+  img_tags        String?    @db.VarChar(255)
+  comments        comments[]
+  users           users?     @relation(fields: [user_id], references: [user_id], map: "FK_imguserid")
+  saved           saved[]
+
+  @@index([user_id], map: "FK_imguserid")
+}
+
+model saved {
+  saved_id   Int       @id @default(autoincrement())
+  user_id    Int?
+  img_id     Int?
+  saved_date DateTime? @db.Date
+  img        img?      @relation(fields: [img_id], references: [img_id], onDelete: Cascade, map: "FK_savedimgid1")
+  users      users?    @relation(fields: [user_id], references: [user_id], map: "FK_saveuserid")
+
+  @@index([img_id], map: "FK_savedimgid1")
+  @@index([user_id], map: "FK_saveuserid")
+}
+
+model users {
+  user_id   Int        @id @default(autoincrement())
+  email     String?    @db.VarChar(255)
+  password  String?    @db.VarChar(255)
+  full_name String?    @db.VarChar(255)
+  birthday  DateTime?  @db.Date
+  avatar    String?    @db.VarChar(255)
+  user_name String?    @db.VarChar(255)
+  comments  comments[]
+  img       img[]
+  saved     saved[]
+}

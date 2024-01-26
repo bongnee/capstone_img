@@ -31,6 +31,15 @@ CREATE TABLE img (
     url VARCHAR(255),
     img_tags VARCHAR(255)
 );
+ALTER TABLE img 
+ADD CONSTRAINT FK_imguserid
+FOREIGN KEY (user_id)
+REFERENCES users(user_id)
+ON DELETE set NULL
+ON UPDATE CASCADE;
+
+
+
 
 INSERT INTO img (user_id, img_name, img_description, url, img_tags)
 VALUES
@@ -56,6 +65,20 @@ CREATE TABLE comments(
 	content VARCHAR(255)
 );
 
+ALTER TABLE comments
+ADD CONSTRAINT FK_cmtuserid
+FOREIGN KEY (user_id)
+REFERENCES users(user_id)
+ON DELETE set NULL
+ON UPDATE CASCADE;
+
+ALTER TABLE comments
+ADD CONSTRAINT FK_cmtimgid
+FOREIGN KEY (img_id)
+REFERENCES img(img_id)
+ON DELETE SET NULL
+ON UPDATE CASCADE;
+
 INSERT INTO comments (user_id, img_id, date_comment, content)
 VALUES
     (1, 1, '2022-01-15', 'Beautiful landscape!'),
@@ -78,6 +101,26 @@ CREATE TABLE saved (
     FOREIGN KEY (img_id) REFERENCES img(img_id),
     saved_date DATE
 );
+
+
+ALTER TABLE saved
+ADD CONSTRAINT FK_savedimgid1
+FOREIGN KEY (img_id)
+REFERENCES img(img_id)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+
+ALTER TABLE saved
+ADD CONSTRAINT FK_saveuserid
+FOREIGN KEY (user_id)
+REFERENCES users(user_id)
+ON DELETE SET NULL
+ON UPDATE CASCADE;
+
+ALTER TABLE saved
+DROP FOREIGN KEY FK_savedimgid
+
 
 INSERT INTO saved (user_id, img_id, saved_date)
 VALUES
